@@ -1,13 +1,24 @@
+
+# Libraries ---------------------------------------------------------------
+
+
 library(tidyverse)
 library(plotly)
 library(nycflights13)
 library(data.table)
 library(lubridate)
 library(trelliscopejs)
+
+# Dataset -----------------------------------------------------------------
+
+ 
 flights
 nycflights13::planes
 flights_planes <- flights %>% left_join(planes, by = "tailnum") # Join with planes data to get manufacturer, model, some specifications 
 flights_planes<- flights_planes %>%rename(model_year = "year.y")
+
+
+# Data Wrangling ----------------------------------------------------------
 
 
 str(flights)
@@ -40,6 +51,9 @@ Flights[dep_type =="delayed" & arr_delay <0,.N , by = .(path, carrier)]
 
 Flights[ , .SD[which.max(model_year)], by = .(flight), .SDcols = c("path", "manufacturer", "model_year")] # Last model year per flight
 
+# plots -------------------------------------------------------------------
+
+ 
 # Some plots for more exploration of data 
 ggplot(Flights, aes(carrier, fill = dep_type))+ geom_bar( position = "fill")
 ggplot(Flights, aes(dep_delay, arr_delay, color = origin))+geom_jitter()+facet_trelliscope(~carrier)
@@ -48,4 +62,5 @@ ggplot(Flights, aes(dep_delay, arr_delay, color = origin))+geom_jitter()+facet_t
 Flights[ , .N, by = .( carrier, dep_type)] %>% ggplot(aes(carrier, N, fill = dep_type))+ geom_col(position = "fill") +labs(title = "Delay status per  carrier")+ theme_test()
 
 ggplot(Flights, aes(factor(month), fill = dep_type))+ geom_bar(position = "dodge")+ labs(title = "Departure delay status per month", x="Month")+ theme_test()
+
 
